@@ -327,6 +327,257 @@ class CartSystemTester:
         except Exception as e:
             self.log_test("Unauthenticated Cart Access", False, f"Request error: {str(e)}")
             return False
+
+    # ===== ENHANCED FEATURES TESTS =====
+    
+    def test_product_search(self):
+        """Test product search functionality"""
+        try:
+            # Test text search
+            response = self.session.get(f"{self.base_url}/products?search=wireless")
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test("Product Text Search", True, f"Found {len(data)} products matching 'wireless'", {"count": len(data)})
+            else:
+                self.log_test("Product Text Search", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+            return True
+        except Exception as e:
+            self.log_test("Product Text Search", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_product_category_filter(self):
+        """Test product category filtering"""
+        try:
+            response = self.session.get(f"{self.base_url}/products?category=Electronics")
+            if response.status_code == 200:
+                data = response.json()
+                electronics_count = len(data)
+                self.log_test("Product Category Filter", True, f"Found {electronics_count} Electronics products", {"count": electronics_count})
+                
+                # Verify all products are Electronics
+                if data and all(product.get("category") == "Electronics" for product in data):
+                    self.log_test("Category Filter Accuracy", True, "All returned products are Electronics")
+                else:
+                    self.log_test("Category Filter Accuracy", False, "Some products don't match Electronics category")
+                    
+                return True
+            else:
+                self.log_test("Product Category Filter", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Product Category Filter", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_product_price_filter(self):
+        """Test product price range filtering"""
+        try:
+            response = self.session.get(f"{self.base_url}/products?min_price=50&max_price=200")
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test("Product Price Filter", True, f"Found {len(data)} products in $50-$200 range", {"count": len(data)})
+                
+                # Verify price range
+                if data:
+                    prices_in_range = all(50 <= product.get("price", 0) <= 200 for product in data)
+                    if prices_in_range:
+                        self.log_test("Price Filter Accuracy", True, "All products within specified price range")
+                    else:
+                        self.log_test("Price Filter Accuracy", False, "Some products outside price range")
+                        
+                return True
+            else:
+                self.log_test("Product Price Filter", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Product Price Filter", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_product_sorting(self):
+        """Test product sorting functionality"""
+        try:
+            # Test price sorting descending
+            response = self.session.get(f"{self.base_url}/products?sort_by=price&sort_order=desc")
+            if response.status_code == 200:
+                data = response.json()
+                if len(data) >= 2:
+                    # Check if sorted by price descending
+                    is_sorted = all(data[i]["price"] >= data[i+1]["price"] for i in range(len(data)-1))
+                    if is_sorted:
+                        self.log_test("Product Sorting", True, f"Products correctly sorted by price (desc). Range: ${data[0]['price']:.2f} - ${data[-1]['price']:.2f}")
+                    else:
+                        self.log_test("Product Sorting", False, "Products not properly sorted by price")
+                else:
+                    self.log_test("Product Sorting", True, "Sorting works (insufficient data to verify order)")
+                return True
+            else:
+                self.log_test("Product Sorting", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Product Sorting", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_get_categories(self):
+        """Test get categories endpoint"""
+        try:
+            response = self.session.get(f"{self.base_url}/products/categories")
+            if response.status_code == 200:
+                data = response.json()
+                if "categories" in data and isinstance(data["categories"], list):
+                    categories = data["categories"]
+                    self.log_test("Get Categories", True, f"Retrieved {len(categories)} categories: {', '.join(categories)}", data)
+                    return categories
+                else:
+                    self.log_test("Get Categories", False, "Invalid categories response format", data)
+                    return []
+            else:
+                self.log_test("Get Categories", False, f"HTTP {response.status_code}: {response.text}")
+                return []
+        except Exception as e:
+            self.log_test("Get Categories", False, f"Request error: {str(e)}")
+            return []
+    
+    def test_search_suggestions(self):
+        """Test search suggestions endpoint"""
+        try:
+            response = self.session.get(f"{self.base_url}/products/search/suggestions?q=smart")
+            if response.status_code == 200:
+                data = response.json()
+                if "suggestions" in data and isinstance(data["suggestions"], list):
+                    suggestions = data["suggestions"]
+                    self.log_test("Search Suggestions", True, f"Retrieved {len(suggestions)} suggestions for 'smart'", data)
+                    return True
+                else:
+                    self.log_test("Search Suggestions", False, "Invalid suggestions response format", data)
+                    return False
+            else:
+                self.log_test("Search Suggestions", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Search Suggestions", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_profile_update(self):
+        """Test profile update functionality"""
+        if not self.auth_token:
+            self.log_test("Profile Update", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            profile_data = {
+                "name": "Sarah Johnson Updated",
+                "phone": "+1-555-9999",
+                "address": "456 Oak Avenue, New City, ST 54321"
+            }
+            
+            response = self.session.put(
+                f"{self.base_url}/auth/profile",
+                json=profile_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test("Profile Update", True, "Profile updated successfully", data)
+                
+                # Verify update by getting profile
+                profile_response = self.session.get(f"{self.base_url}/auth/me", headers=headers)
+                if profile_response.status_code == 200:
+                    profile = profile_response.json()
+                    if profile.get("name") == profile_data["name"] and profile.get("phone") == profile_data["phone"]:
+                        self.log_test("Profile Update Verification", True, "Profile changes verified")
+                    else:
+                        self.log_test("Profile Update Verification", False, "Profile changes not reflected")
+                        
+                return True
+            else:
+                self.log_test("Profile Update", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Profile Update", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_order_history(self):
+        """Test order history retrieval"""
+        if not self.auth_token:
+            self.log_test("Order History", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/orders", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    self.log_test("Order History", True, f"Retrieved {len(data)} orders from history", {"order_count": len(data)})
+                    return data
+                else:
+                    self.log_test("Order History", False, "Invalid order history format", data)
+                    return []
+            else:
+                self.log_test("Order History", False, f"HTTP {response.status_code}: {response.text}")
+                return []
+                
+        except Exception as e:
+            self.log_test("Order History", False, f"Request error: {str(e)}")
+            return []
+    
+    def test_order_details(self, order_id):
+        """Test specific order details retrieval"""
+        if not self.auth_token:
+            self.log_test("Order Details", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/orders/{order_id}", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "id" in data and "items" in data and "total" in data:
+                    self.log_test("Order Details", True, f"Retrieved order details for {order_id}. Total: ${data['total']:.2f}", data)
+                    return True
+                else:
+                    self.log_test("Order Details", False, "Invalid order details format", data)
+                    return False
+            else:
+                self.log_test("Order Details", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Order Details", False, f"Request error: {str(e)}")
+            return False
+    
+    def test_user_analytics(self):
+        """Test user analytics and statistics"""
+        if not self.auth_token:
+            self.log_test("User Analytics", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/analytics/user-stats", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                expected_fields = ["total_orders", "total_spent", "favorite_category", "average_order_value"]
+                if all(field in data for field in expected_fields):
+                    self.log_test("User Analytics", True, f"Analytics retrieved: {data['total_orders']} orders, ${data['total_spent']:.2f} spent, favorite: {data['favorite_category']}", data)
+                    return True
+                else:
+                    self.log_test("User Analytics", False, "Missing analytics fields", data)
+                    return False
+            else:
+                self.log_test("User Analytics", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("User Analytics", False, f"Request error: {str(e)}")
+            return False
     
     def run_comprehensive_test(self):
         """Run complete test suite following the user journey"""
