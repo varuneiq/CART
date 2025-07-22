@@ -1077,7 +1077,7 @@ const OrderHistoryPage = () => {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{item.name}</p>
-                        <p className="text-xs text-gray-600">Qty: {item.quantity} × ${item.price}</p>
+                        <p className="text-xs text-gray-600">Qty: {item.quantity} × ₹{item.price.toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                   ))}
