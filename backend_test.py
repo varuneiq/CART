@@ -580,43 +580,52 @@ class CartSystemTester:
             return False
     
     def run_comprehensive_test(self):
-        """Run complete test suite following the user journey"""
-        print("🚀 Starting Comprehensive Backend API Testing")
-        print("=" * 60)
+        """Run complete test suite following the enhanced user journey"""
+        print("🚀 Starting Comprehensive Enhanced Backend API Testing")
+        print("=" * 70)
         
         # Test 1: Basic connectivity
         if not self.test_root_endpoint():
             print("❌ Cannot connect to API. Stopping tests.")
             return False
         
-        # Test 2: Authentication flow
-        print("\n🔐 Testing Authentication System...")
+        # Test 2: Enhanced Authentication & Profile System
+        print("\n🔐 Testing Enhanced Authentication & Profile System...")
         self.test_user_registration()
         if not self.test_user_login():
             print("❌ Login failed. Cannot continue with authenticated tests.")
             return False
         
         self.test_protected_endpoint()
+        self.test_profile_update()
         self.test_unauthenticated_cart_access()
         
-        # Test 3: Product management
-        print("\n📦 Testing Product Management...")
+        # Test 3: Enhanced Product Management & Search
+        print("\n📦 Testing Enhanced Product Management & Search...")
         self.test_initialize_products()
         products = self.test_get_products()
         
         if not products:
-            print("❌ No products available. Cannot test cart functionality.")
+            print("❌ No products available. Cannot test advanced features.")
             return False
         
-        # Test 4: Cart functionality (complete user journey)
-        print("\n🛒 Testing Cart Management...")
+        # Test advanced search and filtering
+        self.test_product_search()
+        self.test_product_category_filter()
+        self.test_product_price_filter()
+        self.test_product_sorting()
+        categories = self.test_get_categories()
+        self.test_search_suggestions()
+        
+        # Test 4: Enhanced Cart System
+        print("\n🛒 Testing Enhanced Cart Management...")
         self.test_get_cart()
         
         # Use first two products for testing
         product1_id = products[0]["id"]
         product2_id = products[1]["id"] if len(products) > 1 else products[0]["id"]
         
-        # Add items to cart
+        # Add items to cart with categories
         self.test_add_to_cart(product1_id, 2)
         self.test_add_to_cart(product2_id, 1)
         
@@ -629,13 +638,28 @@ class CartSystemTester:
         # Add item back for checkout test
         self.test_add_to_cart(product1_id, 1)
         
-        # Test checkout
-        self.test_checkout()
+        # Test enhanced checkout with shipping address
+        print("\n📦 Testing Enhanced Checkout & Order System...")
+        order_data = self.test_checkout("789 Shipping Lane, Delivery City, ST 67890")
+        
+        # Test 5: Order History & Tracking
+        print("\n📋 Testing Order History & Tracking...")
+        orders = self.test_order_history()
+        
+        if order_data and "order_id" in order_data:
+            self.test_order_details(order_data["order_id"])
+        elif orders and len(orders) > 0:
+            # Test with existing order if available
+            self.test_order_details(orders[0]["id"])
+        
+        # Test 6: Analytics System
+        print("\n📊 Testing Analytics System...")
+        self.test_user_analytics()
         
         # Summary
-        print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print("📊 ENHANCED TEST SUMMARY")
+        print("=" * 70)
         
         passed = sum(1 for result in self.test_results if result["success"])
         total = len(self.test_results)
@@ -645,11 +669,27 @@ class CartSystemTester:
         print(f"Failed: {total - passed}")
         print(f"Success Rate: {(passed/total)*100:.1f}%")
         
+        # Categorize results
+        auth_tests = [r for r in self.test_results if "auth" in r["test"].lower() or "profile" in r["test"].lower() or "registration" in r["test"].lower() or "login" in r["test"].lower()]
+        product_tests = [r for r in self.test_results if "product" in r["test"].lower() or "search" in r["test"].lower() or "categor" in r["test"].lower() or "sort" in r["test"].lower()]
+        cart_tests = [r for r in self.test_results if "cart" in r["test"].lower() or "checkout" in r["test"].lower()]
+        order_tests = [r for r in self.test_results if "order" in r["test"].lower()]
+        analytics_tests = [r for r in self.test_results if "analytics" in r["test"].lower()]
+        
+        print(f"\n📈 Test Categories:")
+        print(f"  Authentication & Profile: {sum(1 for t in auth_tests if t['success'])}/{len(auth_tests)} passed")
+        print(f"  Product Management & Search: {sum(1 for t in product_tests if t['success'])}/{len(product_tests)} passed")
+        print(f"  Cart Management: {sum(1 for t in cart_tests if t['success'])}/{len(cart_tests)} passed")
+        print(f"  Order History: {sum(1 for t in order_tests if t['success'])}/{len(order_tests)} passed")
+        print(f"  Analytics: {sum(1 for t in analytics_tests if t['success'])}/{len(analytics_tests)} passed")
+        
         if total - passed > 0:
             print("\n❌ FAILED TESTS:")
             for result in self.test_results:
                 if not result["success"]:
                     print(f"  • {result['test']}: {result['message']}")
+        else:
+            print("\n🎉 All enhanced features working perfectly!")
         
         return passed == total
 
