@@ -644,7 +644,7 @@ const CartItem = ({ item }) => {
         </button>
       </div>
       <div className="text-right">
-        <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+        <p className="font-semibold">₹{(item.price * item.quantity).toLocaleString('en-IN')}</p>
         <button
           onClick={() => removeFromCart(item.product_id)}
           className="text-red-500 hover:text-red-600 text-sm"
