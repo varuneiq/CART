@@ -14,6 +14,10 @@ import hashlib
 import jwt
 from passlib.context import CryptContext
 import re
+import aiosmtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import asyncio
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
