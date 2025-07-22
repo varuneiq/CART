@@ -646,7 +646,59 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
         "average_order_value": round(average_order_value, 2)
     }
 
-# Basic routes
+# Admin & Order Management Routes
+@api_router.get("/admin/orders")
+async def get_all_orders():
+    """Admin endpoint to get all orders in the system"""
+    orders = await db.orders.find().sort("order_date", -1).to_list(1000)
+    return [Order(**order) for order in orders]
+
+@api_router.get("/admin/orders/stats")
+async def get_order_stats():
+    """Get order statistics for admin dashboard"""
+    total_orders = await db.orders.count_documents({})
+    
+    if total_orders == 0:
+        return {
+            "total_orders": 0,
+            "total_revenue": 0.0,
+            "pending_orders": 0,
+            "completed_orders": 0
+        }
+    
+    # Get all orders for calculations
+    orders = await db.orders.find().to_list(1000)
+    
+    total_revenue = sum(order["total"] for order in orders)
+    completed_orders = len([o for o in orders if o["status"] == "completed"])
+    pending_orders = len([o for o in orders if o["status"] == "pending"])
+    
+    return {
+        "total_orders": total_orders,
+        "total_revenue": round(total_revenue, 2),
+        "pending_orders": pending_orders,
+        "completed_orders": completed_orders
+    }
+
+@api_router.put("/admin/orders/{order_id}/status")
+async def update_order_status(order_id: str, status: str):
+    """Update order status (admin only)"""
+    result = await db.orders.update_one(
+        {"id": order_id},
+        {"$set": {"status": status}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    return {"message": f"Order status updated to {status}"}
+
+# Fulfillment Routes
+@api_router.get("/admin/fulfillment/queue")
+async def get_fulfillment_queue():
+    """Get orders that need to be fulfilled"""
+    orders = await db.orders.find({"status": {"$in": ["completed", "processing"]}}).sort("order_date", 1).to_list(100)
+    return [Order(**order) for order in orders]
 @api_router.get("/")
 async def root():
     return {"message": "Enhanced Cart Management System API"}
