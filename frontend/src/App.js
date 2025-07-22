@@ -327,6 +327,9 @@ const Header = () => {
               <button onClick={() => navigate('/profile')} className="text-gray-600 hover:text-gray-800">
                 Profile
               </button>
+              <button onClick={() => navigate('/admin')} className="text-gray-600 hover:text-gray-800">
+                Admin
+              </button>
               <span className="text-gray-600">Hello, {user.name}</span>
               <button 
                 onClick={logout}
