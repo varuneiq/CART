@@ -952,12 +952,12 @@ const ProfilePage = () => {
               
               <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-green-800">Total Spent</h4>
-                <p className="text-2xl font-bold text-green-600">${userStats.total_spent}</p>
+                <p className="text-2xl font-bold text-green-600">₹{userStats.total_spent.toLocaleString('en-IN')}</p>
               </div>
               
               <div className="bg-purple-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-purple-800">Average Order</h4>
-                <p className="text-2xl font-bold text-purple-600">${userStats.average_order_value}</p>
+                <p className="text-2xl font-bold text-purple-600">₹{userStats.average_order_value.toLocaleString('en-IN')}</p>
               </div>
               
               {userStats.favorite_category && (
