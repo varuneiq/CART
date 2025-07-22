@@ -749,19 +749,19 @@ const CartPage = () => {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span>Items ({cart.items.reduce((sum, item) => sum + item.quantity, 0)}):</span>
-                <span>${cart.total.toFixed(2)}</span>
+                <span>₹{cart.total.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping:</span>
                 <span className="text-green-600">Free</span>
               </div>
               <div className="flex justify-between">
-                <span>Tax:</span>
-                <span>${(cart.total * 0.08).toFixed(2)}</span>
+                <span>GST (18%):</span>
+                <span>₹{(cart.total * 0.18).toLocaleString('en-IN')}</span>
               </div>
               <div className="border-t pt-2 flex justify-between font-semibold text-lg">
                 <span>Total:</span>
-                <span>${(cart.total * 1.08).toFixed(2)}</span>
+                <span>₹{(cart.total * 1.18).toLocaleString('en-IN')}</span>
               </div>
             </div>
 
