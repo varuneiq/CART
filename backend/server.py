@@ -32,6 +32,12 @@ SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'your-secret-key-change-in-product
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# Email Settings
+SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
+EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', 'noreply@cartmart.com')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'demo_password')
+
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
