@@ -261,123 +261,197 @@ async def create_product(product: Product):
     await db.products.insert_one(product.dict())
     return product
 
-# Initialize enhanced sample products
+# Initialize enhanced biotech/lab products
 @api_router.post("/init/products")
 async def initialize_products():
     sample_products = [
-        # Electronics Category
+        # Antibodies Category
         {
             "id": str(uuid.uuid4()),
-            "name": "Wireless Bluetooth Headphones",
-            "price": 99.99,
-            "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life",
-            "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-            "category": "Electronics",
-            "stock": 50,
+            "name": "Enterokinase Antibody, mAb, Mouse",
+            "price": 113.00,
+            "description": "Mouse Anti-Enterokinase Monoclonal Antibody recognizes EK in Western blots and ELISAs. Enterokinase is an intestinal enzyme responsible for initiating activation of pancreatic proteolytic proenzymes.",
+            "image_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300&h=300&fit=crop",
+            "category": "Antibodies",
+            "stock": 25,
+            "rating": 4.7,
+            "reviews_count": 89,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Beta-Actin Antibody, Polyclonal",
+            "price": 89.00,
+            "description": "Rabbit polyclonal antibody against Beta-Actin. Ideal loading control for Western blot applications. High specificity and sensitivity.",
+            "image_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300&h=300&fit=crop",
+            "category": "Antibodies",
+            "stock": 45,
+            "rating": 4.8,
+            "reviews_count": 156,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "GAPDH Antibody, Mouse mAb",
+            "price": 95.00,
+            "description": "Mouse monoclonal antibody against GAPDH. Commonly used housekeeping gene control for Western blot and immunofluorescence.",
+            "image_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300&h=300&fit=crop",
+            "category": "Antibodies",
+            "stock": 35,
+            "rating": 4.6,
+            "reviews_count": 203,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Lab Equipment Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Digital Micropipette Set (0.5-10μL, 2-20μL, 20-200μL)",
+            "price": 245.00,
+            "description": "High-precision digital micropipette set with LCD display. Includes three volume ranges for accurate liquid handling in molecular biology applications.",
+            "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&h=300&fit=crop",
+            "category": "Lab Equipment",
+            "stock": 15,
+            "rating": 4.9,
+            "reviews_count": 67,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "PCR Thermal Cycler, 96-Well",
+            "price": 2899.00,
+            "description": "Advanced thermal cycler for PCR applications. Features rapid heating/cooling, gradient capability, and intuitive touchscreen interface.",
+            "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&h=300&fit=crop",
+            "category": "Lab Equipment",
+            "stock": 5,
+            "rating": 4.8,
+            "reviews_count": 34,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Benchtop Centrifuge, 15,000 RPM",
+            "price": 1299.00,
+            "description": "Compact benchtop centrifuge with digital display. Accommodates various tube sizes from 0.2mL to 15mL. Quiet operation with safety lock.",
+            "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&h=300&fit=crop",
+            "category": "Lab Equipment",
+            "stock": 8,
+            "rating": 4.7,
+            "reviews_count": 45,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Reagents Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Taq DNA Polymerase (500 Units)",
+            "price": 67.00,
+            "description": "High-quality Taq DNA polymerase for PCR amplification. Includes 10x buffer and MgCl2 solution. Suitable for routine PCR applications.",
+            "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop",
+            "category": "Reagents",
+            "stock": 60,
             "rating": 4.5,
             "reviews_count": 128,
             "created_at": datetime.utcnow()
         },
         {
             "id": str(uuid.uuid4()),
-            "name": "Smartphone Pro Max",
-            "price": 699.99,
-            "description": "Latest flagship smartphone with advanced camera system and 5G connectivity",
-            "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
-            "category": "Electronics",
-            "stock": 30,
-            "rating": 4.8,
-            "reviews_count": 256,
+            "name": "Protein Ladder, Pre-stained (10-250 kDa)",
+            "price": 45.00,
+            "description": "Pre-stained protein molecular weight marker for SDS-PAGE and Western blot applications. Sharp bands with consistent migration.",
+            "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop",
+            "category": "Reagents",
+            "stock": 85,
+            "rating": 4.6,
+            "reviews_count": 94,
             "created_at": datetime.utcnow()
         },
         {
             "id": str(uuid.uuid4()),
-            "name": "Wireless Charging Pad",
-            "price": 29.99,
-            "description": "Fast wireless charging pad compatible with all Qi-enabled devices",
-            "image_url": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=300&h=300&fit=crop",
-            "category": "Electronics",
-            "stock": 75,
+            "name": "ELISA Kit - Human IL-6",
+            "price": 189.00,
+            "description": "Quantitative sandwich ELISA kit for human Interleukin-6 detection. High sensitivity and specificity. Includes all necessary reagents.",
+            "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop",
+            "category": "Reagents",
+            "stock": 25,
+            "rating": 4.7,
+            "reviews_count": 76,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Consumables Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Microcentrifuge Tubes, 1.5mL (1000 pack)",
+            "price": 29.00,
+            "description": "Sterile, DNase/RNase-free microcentrifuge tubes. Graduated markings and secure-fit caps. Ideal for sample storage and centrifugation.",
+            "image_url": "https://images.unsplash.com/photo-1551601651-09e1c1c96b7a?w=300&h=300&fit=crop",
+            "category": "Consumables",
+            "stock": 150,
+            "rating": 4.4,
+            "reviews_count": 234,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "PCR Tubes, 0.2mL (500 pack)",
+            "price": 35.00,
+            "description": "Ultra-thin wall PCR tubes for optimal heat transfer. Compatible with most thermal cyclers. Clear polypropylene construction.",
+            "image_url": "https://images.unsplash.com/photo-1551601651-09e1c1c96b7a?w=300&h=300&fit=crop",
+            "category": "Consumables",
+            "stock": 200,
+            "rating": 4.3,
+            "reviews_count": 167,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Nitrile Gloves, Powder-Free (100 pack)",
+            "price": 15.00,
+            "description": "Chemical-resistant nitrile gloves. Powder-free and latex-free. Textured fingertips for improved grip. Size Large.",
+            "image_url": "https://images.unsplash.com/photo-1551601651-09e1c1c96b7a?w=300&h=300&fit=crop",
+            "category": "Consumables",
+            "stock": 300,
             "rating": 4.2,
+            "reviews_count": 445,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Instruments Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Digital pH Meter with Calibration",
+            "price": 179.00,
+            "description": "High-precision digital pH meter with automatic temperature compensation. Includes electrode, calibration buffers, and carrying case.",
+            "image_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=300&h=300&fit=crop",
+            "category": "Instruments",
+            "stock": 20,
+            "rating": 4.6,
             "reviews_count": 89,
             "created_at": datetime.utcnow()
         },
-        
-        # Fashion Category
         {
             "id": str(uuid.uuid4()),
-            "name": "Premium Leather Handbag",
-            "price": 149.99,
-            "description": "Elegant leather handbag with multiple compartments and adjustable strap",
-            "image_url": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=300&fit=crop",
-            "category": "Fashion",
-            "stock": 25,
-            "rating": 4.6,
-            "reviews_count": 67,
+            "name": "Analytical Balance, 0.1mg Precision",
+            "price": 1450.00,
+            "description": "High-precision analytical balance with 0.1mg readability. Internal calibration, draft shield, and RS232 connectivity.",
+            "image_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=300&h=300&fit=crop",
+            "category": "Instruments",
+            "stock": 6,
+            "rating": 4.8,
+            "reviews_count": 52,
             "created_at": datetime.utcnow()
         },
         {
             "id": str(uuid.uuid4()),
-            "name": "Classic Denim Jacket",
-            "price": 79.99,
-            "description": "Timeless denim jacket made from premium cotton with vintage wash",
-            "image_url": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=300&fit=crop",
-            "category": "Fashion",
-            "stock": 40,
-            "rating": 4.3,
-            "reviews_count": 45,
-            "created_at": datetime.utcnow()
-        },
-        
-        # Home Category
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Ceramic Coffee Mug Set",
-            "price": 34.99,
-            "description": "Set of 4 premium ceramic coffee mugs with ergonomic handles",
-            "image_url": "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=300&h=300&fit=crop",
-            "category": "Home",
-            "stock": 100,
-            "rating": 4.7,
-            "reviews_count": 156,
-            "created_at": datetime.utcnow()
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Bamboo Cutting Board",
-            "price": 24.99,
-            "description": "Eco-friendly bamboo cutting board with juice groove and non-slip feet",
-            "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
-            "category": "Home",
-            "stock": 60,
-            "rating": 4.4,
-            "reviews_count": 92,
-            "created_at": datetime.utcnow()
-        },
-        
-        # Sports Category
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Yoga Exercise Mat",
-            "price": 39.99,
-            "description": "Premium non-slip yoga mat with alignment guides and carrying strap",
-            "image_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=300&fit=crop",
-            "category": "Sports",
-            "stock": 45,
-            "rating": 4.5,
-            "reviews_count": 78,
-            "created_at": datetime.utcnow()
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Stainless Steel Water Bottle",
-            "price": 19.99,
-            "description": "Insulated stainless steel water bottle keeps drinks cold for 24 hours",
-            "image_url": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300&h=300&fit=crop",
-            "category": "Sports",
-            "stock": 80,
-            "rating": 4.6,
-            "reviews_count": 134,
+            "name": "UV-Vis Spectrophotometer",
+            "price": 3299.00,
+            "description": "Compact UV-Visible spectrophotometer for nucleic acid and protein quantification. Wavelength range 190-1100nm with high accuracy.",
+            "image_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=300&h=300&fit=crop",
+            "category": "Instruments",
+            "stock": 3,
+            "rating": 4.9,
+            "reviews_count": 28,
             "created_at": datetime.utcnow()
         }
     ]
@@ -388,7 +462,7 @@ async def initialize_products():
     # Insert sample products
     await db.products.insert_many(sample_products)
     
-    return {"message": "Enhanced sample products initialized successfully", "count": len(sample_products)}
+    return {"message": "Biotech/Laboratory products initialized successfully", "count": len(sample_products)}
 
 # Enhanced Cart Routes
 @api_router.get("/cart")
