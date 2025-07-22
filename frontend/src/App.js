@@ -1297,7 +1297,208 @@ const RegisterPage = () => {
   );
 };
 
-// Main App component
+// Admin Dashboard Page
+const AdminDashboard = () => {
+  const { token } = useAuth();
+  const [orders, setOrders] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) {
+      loadAdminData();
+    }
+  }, [token]);
+
+  const loadAdminData = async () => {
+    try {
+      const [ordersResponse, statsResponse] = await Promise.all([
+        axios.get(`${API}/admin/orders`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${API}/admin/orders/stats`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+      
+      setOrders(ordersResponse.data);
+      setStats(statsResponse.data);
+    } catch (error) {
+      console.error('Failed to load admin data:', error);
+    }
+    setLoading(false);
+  };
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await axios.put(`${API}/admin/orders/${orderId}/status?status=${newStatus}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Refresh orders
+      loadAdminData();
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+    }
+  };
+
+  if (!token) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <p>Please log in to access admin dashboard.</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-3xl font-bold mb-8">🏪 Admin Dashboard - Order Management</h2>
+      
+      {/* Order Statistics */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-blue-50 p-6 rounded-lg">
+            <h3 className="font-semibold text-blue-800">Total Orders</h3>
+            <p className="text-3xl font-bold text-blue-600">{stats.total_orders}</p>
+          </div>
+          <div className="bg-green-50 p-6 rounded-lg">
+            <h3 className="font-semibold text-green-800">Total Revenue</h3>
+            <p className="text-3xl font-bold text-green-600">₹{stats.total_revenue.toLocaleString('en-IN')}</p>
+          </div>
+          <div className="bg-yellow-50 p-6 rounded-lg">
+            <h3 className="font-semibold text-yellow-800">Pending Orders</h3>
+            <p className="text-3xl font-bold text-yellow-600">{stats.pending_orders}</p>
+          </div>
+          <div className="bg-purple-50 p-6 rounded-lg">
+            <h3 className="font-semibent text-purple-800">Completed Orders</h3>
+            <p className="text-3xl font-bold text-purple-600">{stats.completed_orders}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Order Fulfillment Information */}
+      <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-8">
+        <h3 className="text-xl font-semibold text-orange-800 mb-4">📦 Order Fulfillment Process</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h4 className="font-semibold text-gray-800">1. Order Received</h4>
+            <p className="text-sm text-gray-600">Orders are automatically stored in MongoDB database when customers checkout</p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-800">2. Processing Queue</h4>
+            <p className="text-sm text-gray-600">Lab technicians and inventory staff receive notifications to prepare items</p>
+          </div>
+          <div>
+            <h4 className="font-semibent text-gray-800">3. Fulfillment Partner</h4>
+            <p className="text-sm text-gray-600">Integration with logistics partners (Delhivery, Blue Dart) for shipping to customers</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Current Implementation Notice */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+        <h3 className="text-xl font-semibold text-blue-800 mb-4">🔄 Current System Status</h3>
+        <div className="space-y-3">
+          <p><strong>Order Storage:</strong> All orders are stored in MongoDB with complete customer and product details</p>
+          <p><strong>Admin Access:</strong> This dashboard shows all orders placed by customers in real-time</p>
+          <p><strong>Next Steps for Production:</strong></p>
+          <ul className="list-disc ml-6 space-y-1 text-sm text-gray-700">
+            <li>Integrate with inventory management system (SAP, NetSuite, etc.)</li>
+            <li>Connect with shipping providers (Delhivery, FedEx, Blue Dart APIs)</li>
+            <li>Add SMS/Email notifications to customers</li>
+            <li>Implement barcode scanning for lab staff</li>
+            <li>Add payment gateway integration (Razorpay, PayU)</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* All Orders */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <h3 className="text-xl font-semibold">All Customer Orders</h3>
+          <p className="text-gray-600">Manage and track all orders placed through the system</p>
+        </div>
+        
+        {orders.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            <p>No orders found</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Order ID</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Customer</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Items</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Total</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Status</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Date</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {orders.map(order => (
+                  <tr key={order.id}>
+                    <td className="px-4 py-4 text-sm text-gray-900 font-mono">
+                      {order.id.slice(0, 8)}...
+                    </td>
+                    <td className="px-4 py-4 text-sm">
+                      <div>
+                        <p className="font-medium text-gray-900">{order.user_name}</p>
+                        <p className="text-gray-500">{order.user_email}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {order.items.length} items
+                    </td>
+                    <td className="px-4 py-4 text-sm font-semibold text-gray-900">
+                      ₹{order.total.toLocaleString('en-IN')}
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        order.status === 'completed' 
+                          ? 'bg-green-100 text-green-800' 
+                          : order.status === 'processing'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {new Date(order.order_date).toLocaleDateString('en-IN')}
+                    </td>
+                    <td className="px-4 py-4 text-sm">
+                      <select
+                        value={order.status}
+                        onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                        className="text-sm border border-gray-300 rounded px-2 py-1"
+                      >
+                        <option value="completed">Completed</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 function App() {
   return (
     <AuthProvider>
