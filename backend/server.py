@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -38,21 +38,30 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-# Models
+# Enhanced Models
 class UserRegister(BaseModel):
     email: EmailStr
     password: str
     name: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class UserProfile(BaseModel):
+    name: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
 
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
     name: str
     password_hash: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class Product(BaseModel):
@@ -61,7 +70,10 @@ class Product(BaseModel):
     price: float
     description: str
     image_url: str
+    category: str
     stock: int = 100
+    rating: float = 0.0
+    reviews_count: int = 0
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class CartItem(BaseModel):
@@ -70,6 +82,7 @@ class CartItem(BaseModel):
     price: float
     image_url: str
     quantity: int
+    category: str
 
 class Cart(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -77,6 +90,17 @@ class Cart(BaseModel):
     items: List[CartItem] = []
     total: float = 0.0
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Order(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    user_name: str
+    user_email: str
+    items: List[CartItem]
+    total: float
+    status: str = "completed"
+    order_date: datetime = Field(default_factory=datetime.utcnow)
+    shipping_address: Optional[str] = None
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -128,7 +152,9 @@ async def register(user_data: UserRegister):
     user = User(
         email=user_data.email,
         name=user_data.name,
-        password_hash=hashed_password
+        password_hash=hashed_password,
+        phone=user_data.phone,
+        address=user_data.address
     )
     
     await db.users.insert_one(user.dict())
@@ -156,57 +182,202 @@ async def login(user_data: UserLogin):
 
 @api_router.get("/auth/me")
 async def get_me(current_user: User = Depends(get_current_user)):
-    return {"id": current_user.id, "email": current_user.email, "name": current_user.name}
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "name": current_user.name,
+        "phone": current_user.phone,
+        "address": current_user.address,
+        "created_at": current_user.created_at
+    }
 
-# Product Routes
-@api_router.get("/products", response_model=List[Product])
-async def get_products():
-    products = await db.products.find().to_list(100)
+@api_router.put("/auth/profile")
+async def update_profile(profile_data: UserProfile, current_user: User = Depends(get_current_user)):
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {
+            "name": profile_data.name,
+            "phone": profile_data.phone,
+            "address": profile_data.address
+        }}
+    )
+    return {"message": "Profile updated successfully"}
+
+# Enhanced Product Routes
+@api_router.get("/products")
+async def get_products(
+    search: Optional[str] = Query(None, description="Search products by name or description"),
+    category: Optional[str] = Query(None, description="Filter by category"),
+    min_price: Optional[float] = Query(None, description="Minimum price filter"),
+    max_price: Optional[float] = Query(None, description="Maximum price filter"),
+    sort_by: Optional[str] = Query("name", description="Sort by: name, price, rating, created_at"),
+    sort_order: Optional[str] = Query("asc", description="Sort order: asc, desc"),
+    limit: Optional[int] = Query(50, description="Maximum number of products to return")
+):
+    # Build query filter
+    query_filter = {}
+    
+    if search:
+        query_filter["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"description": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if category:
+        query_filter["category"] = category
+    
+    if min_price is not None or max_price is not None:
+        price_filter = {}
+        if min_price is not None:
+            price_filter["$gte"] = min_price
+        if max_price is not None:
+            price_filter["$lte"] = max_price
+        query_filter["price"] = price_filter
+    
+    # Build sort criteria
+    sort_direction = 1 if sort_order == "asc" else -1
+    sort_criteria = [(sort_by, sort_direction)]
+    
+    products = await db.products.find(query_filter).sort(sort_criteria).limit(limit).to_list(limit)
     return [Product(**product) for product in products]
+
+@api_router.get("/products/categories")
+async def get_categories():
+    categories = await db.products.distinct("category")
+    return {"categories": categories}
+
+@api_router.get("/products/search/suggestions")
+async def get_search_suggestions(q: str = Query(..., min_length=2)):
+    # Get product names that match the query for autocomplete
+    products = await db.products.find({
+        "name": {"$regex": f"^{q}", "$options": "i"}
+    }).limit(10).to_list(10)
+    
+    suggestions = [product["name"] for product in products]
+    return {"suggestions": suggestions}
 
 @api_router.post("/products", response_model=Product)
 async def create_product(product: Product):
     await db.products.insert_one(product.dict())
     return product
 
-# Initialize sample products
+# Initialize enhanced sample products
 @api_router.post("/init/products")
 async def initialize_products():
     sample_products = [
+        # Electronics Category
         {
             "id": str(uuid.uuid4()),
-            "name": "Wireless Headphones",
+            "name": "Wireless Bluetooth Headphones",
             "price": 99.99,
-            "description": "High-quality wireless headphones with noise cancellation",
+            "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life",
             "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
+            "category": "Electronics",
             "stock": 50,
+            "rating": 4.5,
+            "reviews_count": 128,
             "created_at": datetime.utcnow()
         },
         {
             "id": str(uuid.uuid4()),
-            "name": "Smartphone",
+            "name": "Smartphone Pro Max",
             "price": 699.99,
-            "description": "Latest model smartphone with advanced camera",
+            "description": "Latest flagship smartphone with advanced camera system and 5G connectivity",
             "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
+            "category": "Electronics",
             "stock": 30,
+            "rating": 4.8,
+            "reviews_count": 256,
             "created_at": datetime.utcnow()
         },
         {
             "id": str(uuid.uuid4()),
-            "name": "Laptop Bag",
-            "price": 49.99,
-            "description": "Durable laptop bag with multiple compartments",
+            "name": "Wireless Charging Pad",
+            "price": 29.99,
+            "description": "Fast wireless charging pad compatible with all Qi-enabled devices",
+            "image_url": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=300&h=300&fit=crop",
+            "category": "Electronics",
+            "stock": 75,
+            "rating": 4.2,
+            "reviews_count": 89,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Fashion Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Premium Leather Handbag",
+            "price": 149.99,
+            "description": "Elegant leather handbag with multiple compartments and adjustable strap",
             "image_url": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=300&fit=crop",
+            "category": "Fashion",
             "stock": 25,
+            "rating": 4.6,
+            "reviews_count": 67,
             "created_at": datetime.utcnow()
         },
         {
             "id": str(uuid.uuid4()),
-            "name": "Coffee Mug",
-            "price": 19.99,
-            "description": "Premium ceramic coffee mug",
+            "name": "Classic Denim Jacket",
+            "price": 79.99,
+            "description": "Timeless denim jacket made from premium cotton with vintage wash",
+            "image_url": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=300&fit=crop",
+            "category": "Fashion",
+            "stock": 40,
+            "rating": 4.3,
+            "reviews_count": 45,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Home Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Ceramic Coffee Mug Set",
+            "price": 34.99,
+            "description": "Set of 4 premium ceramic coffee mugs with ergonomic handles",
             "image_url": "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=300&h=300&fit=crop",
+            "category": "Home",
             "stock": 100,
+            "rating": 4.7,
+            "reviews_count": 156,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Bamboo Cutting Board",
+            "price": 24.99,
+            "description": "Eco-friendly bamboo cutting board with juice groove and non-slip feet",
+            "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+            "category": "Home",
+            "stock": 60,
+            "rating": 4.4,
+            "reviews_count": 92,
+            "created_at": datetime.utcnow()
+        },
+        
+        # Sports Category
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Yoga Exercise Mat",
+            "price": 39.99,
+            "description": "Premium non-slip yoga mat with alignment guides and carrying strap",
+            "image_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=300&fit=crop",
+            "category": "Sports",
+            "stock": 45,
+            "rating": 4.5,
+            "reviews_count": 78,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Stainless Steel Water Bottle",
+            "price": 19.99,
+            "description": "Insulated stainless steel water bottle keeps drinks cold for 24 hours",
+            "image_url": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300&h=300&fit=crop",
+            "category": "Sports",
+            "stock": 80,
+            "rating": 4.6,
+            "reviews_count": 134,
             "created_at": datetime.utcnow()
         }
     ]
@@ -217,9 +388,9 @@ async def initialize_products():
     # Insert sample products
     await db.products.insert_many(sample_products)
     
-    return {"message": "Sample products initialized successfully"}
+    return {"message": "Enhanced sample products initialized successfully", "count": len(sample_products)}
 
-# Cart Routes
+# Enhanced Cart Routes
 @api_router.get("/cart")
 async def get_cart(current_user: User = Depends(get_current_user)):
     cart = await db.carts.find_one({"user_id": current_user.id})
@@ -261,7 +432,8 @@ async def add_to_cart(
             name=product["name"],
             price=product["price"],
             image_url=product["image_url"],
-            quantity=quantity
+            quantity=quantity,
+            category=product["category"]
         )
         cart["items"] = cart.get("items", []) + [new_item.dict()]
     
@@ -322,13 +494,23 @@ async def remove_from_cart(product_id: str, current_user: User = Depends(get_cur
     return Cart(**cart)
 
 @api_router.post("/cart/checkout")
-async def checkout(current_user: User = Depends(get_current_user)):
+async def checkout(shipping_address: Optional[str] = None, current_user: User = Depends(get_current_user)):
     cart = await db.carts.find_one({"user_id": current_user.id})
     if not cart or not cart.get("items"):
         raise HTTPException(status_code=400, detail="Cart is empty")
     
-    # Mock checkout - in real app, integrate with payment processor
-    order_id = str(uuid.uuid4())
+    # Create order record
+    order = Order(
+        user_id=current_user.id,
+        user_name=current_user.name,
+        user_email=current_user.email,
+        items=cart["items"],
+        total=cart["total"],
+        shipping_address=shipping_address or current_user.address
+    )
+    
+    # Save order to database
+    await db.orders.insert_one(order.dict())
     
     # Clear cart after checkout
     await db.carts.update_one(
@@ -337,15 +519,63 @@ async def checkout(current_user: User = Depends(get_current_user)):
     )
     
     return {
-        "order_id": order_id,
-        "total": cart["total"],
-        "message": "Order placed successfully! (Mock checkout)"
+        "order_id": order.id,
+        "total": order.total,
+        "message": "Order placed successfully!",
+        "order_date": order.order_date
+    }
+
+# Order History Routes
+@api_router.get("/orders")
+async def get_order_history(current_user: User = Depends(get_current_user)):
+    orders = await db.orders.find({"user_id": current_user.id}).sort("order_date", -1).to_list(100)
+    return [Order(**order) for order in orders]
+
+@api_router.get("/orders/{order_id}")
+async def get_order_details(order_id: str, current_user: User = Depends(get_current_user)):
+    order = await db.orders.find_one({"id": order_id, "user_id": current_user.id})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return Order(**order)
+
+# Analytics Routes (for admin or user insights)
+@api_router.get("/analytics/user-stats")
+async def get_user_stats(current_user: User = Depends(get_current_user)):
+    # Get user's order statistics
+    orders = await db.orders.find({"user_id": current_user.id}).to_list(100)
+    
+    if not orders:
+        return {
+            "total_orders": 0,
+            "total_spent": 0.0,
+            "favorite_category": None,
+            "average_order_value": 0.0
+        }
+    
+    total_orders = len(orders)
+    total_spent = sum(order["total"] for order in orders)
+    average_order_value = total_spent / total_orders if total_orders > 0 else 0
+    
+    # Calculate favorite category
+    category_counts = {}
+    for order in orders:
+        for item in order["items"]:
+            category = item["category"]
+            category_counts[category] = category_counts.get(category, 0) + item["quantity"]
+    
+    favorite_category = max(category_counts.items(), key=lambda x: x[1])[0] if category_counts else None
+    
+    return {
+        "total_orders": total_orders,
+        "total_spent": round(total_spent, 2),
+        "favorite_category": favorite_category,
+        "average_order_value": round(average_order_value, 2)
     }
 
 # Basic routes
 @api_router.get("/")
 async def root():
-    return {"message": "Cart Management System API"}
+    return {"message": "Enhanced Cart Management System API"}
 
 # Include the router in the main app
 app.include_router(api_router)
