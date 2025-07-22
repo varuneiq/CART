@@ -1056,7 +1056,7 @@ const OrderHistoryPage = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-lg">${order.total.toFixed(2)}</p>
+                  <p className="font-bold text-lg">₹{order.total.toLocaleString('en-IN')}</p>
                   <span className={`px-2 py-1 rounded-full text-sm ${
                     order.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                   }`}>
