@@ -504,7 +504,7 @@ const ProductCard = ({ product }) => {
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-xl font-bold text-green-600">${product.price}</span>
+          <span className="text-xl font-bold text-green-600">₹{product.price.toLocaleString('en-IN')}</span>
           <button
             onClick={() => addToCart(product)}
             disabled={cartLoading}
