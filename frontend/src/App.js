@@ -692,7 +692,7 @@ const CartPage = () => {
         <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg mb-6">
           <h2 className="text-2xl font-bold mb-2">🎉 Order Successful!</h2>
           <p className="text-lg">Order ID: <span className="font-mono">{orderComplete.order_id}</span></p>
-          <p>Total: <span className="font-bold">${orderComplete.total}</span></p>
+          <p>Total: <span className="font-bold">₹{orderComplete.total.toLocaleString('en-IN')}</span></p>
           <p className="text-sm mt-2">{orderComplete.message}</p>
           <p className="text-xs text-gray-600 mt-1">
             Order Date: {new Date(orderComplete.order_date).toLocaleString()}
