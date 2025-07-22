@@ -625,7 +625,7 @@ const CartItem = ({ item }) => {
       />
       <div className="flex-1">
         <h3 className="font-semibold">{item.name}</h3>
-        <p className="text-gray-600">${item.price}</p>
+        <p className="text-gray-600">₹{item.price.toLocaleString('en-IN')}</p>
         <span className="text-xs bg-gray-100 px-2 py-1 rounded">{item.category}</span>
       </div>
       <div className="flex items-center space-x-2">
