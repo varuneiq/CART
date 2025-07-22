@@ -281,31 +281,35 @@ class CartSystemTester:
             self.log_test("Remove from Cart", False, f"Request error: {str(e)}")
             return False
     
-    def test_checkout(self):
-        """Test checkout process"""
+    def test_checkout(self, shipping_address=None):
+        """Test checkout process with enhanced shipping address"""
         if not self.auth_token:
             self.log_test("Checkout", False, "No auth token available")
             return False
             
         try:
             headers = {"Authorization": f"Bearer {self.auth_token}"}
-            response = self.session.post(f"{self.base_url}/cart/checkout", headers=headers)
+            params = {}
+            if shipping_address:
+                params["shipping_address"] = shipping_address
+                
+            response = self.session.post(f"{self.base_url}/cart/checkout", headers=headers, params=params)
             
             if response.status_code == 200:
                 data = response.json()
                 if "order_id" in data and "total" in data:
                     self.log_test("Checkout", True, f"Order placed successfully. Order ID: {data['order_id']}, Total: ${data['total']:.2f}", data)
-                    return True
+                    return data
                 else:
                     self.log_test("Checkout", False, "Invalid checkout response format", data)
-                    return False
+                    return None
             else:
                 self.log_test("Checkout", False, f"HTTP {response.status_code}: {response.text}")
-                return False
+                return None
                 
         except Exception as e:
             self.log_test("Checkout", False, f"Request error: {str(e)}")
-            return False
+            return None
     
     def test_unauthenticated_cart_access(self):
         """Test that cart endpoints require authentication"""
