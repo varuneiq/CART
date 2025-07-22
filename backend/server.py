@@ -269,7 +269,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Enterokinase Antibody, mAb, Mouse",
-            "price": 113.00,
+            "price": 9379.00,  # ₹9,379 (was $113)
             "description": "Mouse Anti-Enterokinase Monoclonal Antibody recognizes EK in Western blots and ELISAs. Enterokinase is an intestinal enzyme responsible for initiating activation of pancreatic proteolytic proenzymes.",
             "image_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300&h=300&fit=crop",
             "category": "Antibodies",
@@ -281,7 +281,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Beta-Actin Antibody, Polyclonal",
-            "price": 89.00,
+            "price": 7387.00,  # ₹7,387 (was $89)
             "description": "Rabbit polyclonal antibody against Beta-Actin. Ideal loading control for Western blot applications. High specificity and sensitivity.",
             "image_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300&h=300&fit=crop",
             "category": "Antibodies",
@@ -293,7 +293,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "GAPDH Antibody, Mouse mAb",
-            "price": 95.00,
+            "price": 7885.00,  # ₹7,885 (was $95)
             "description": "Mouse monoclonal antibody against GAPDH. Commonly used housekeeping gene control for Western blot and immunofluorescence.",
             "image_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300&h=300&fit=crop",
             "category": "Antibodies",
@@ -307,7 +307,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Digital Micropipette Set (0.5-10μL, 2-20μL, 20-200μL)",
-            "price": 245.00,
+            "price": 20335.00,  # ₹20,335 (was $245)
             "description": "High-precision digital micropipette set with LCD display. Includes three volume ranges for accurate liquid handling in molecular biology applications.",
             "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&h=300&fit=crop",
             "category": "Lab Equipment",
@@ -319,7 +319,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "PCR Thermal Cycler, 96-Well",
-            "price": 2899.00,
+            "price": 240617.00,  # ₹2,40,617 (was $2899)
             "description": "Advanced thermal cycler for PCR applications. Features rapid heating/cooling, gradient capability, and intuitive touchscreen interface.",
             "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&h=300&fit=crop",
             "category": "Lab Equipment",
@@ -331,7 +331,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Benchtop Centrifuge, 15,000 RPM",
-            "price": 1299.00,
+            "price": 107817.00,  # ₹1,07,817 (was $1299)
             "description": "Compact benchtop centrifuge with digital display. Accommodates various tube sizes from 0.2mL to 15mL. Quiet operation with safety lock.",
             "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&h=300&fit=crop",
             "category": "Lab Equipment",
@@ -345,7 +345,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Taq DNA Polymerase (500 Units)",
-            "price": 67.00,
+            "price": 5561.00,  # ₹5,561 (was $67)
             "description": "High-quality Taq DNA polymerase for PCR amplification. Includes 10x buffer and MgCl2 solution. Suitable for routine PCR applications.",
             "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop",
             "category": "Reagents",
@@ -357,7 +357,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Protein Ladder, Pre-stained (10-250 kDa)",
-            "price": 45.00,
+            "price": 3735.00,  # ₹3,735 (was $45)
             "description": "Pre-stained protein molecular weight marker for SDS-PAGE and Western blot applications. Sharp bands with consistent migration.",
             "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop",
             "category": "Reagents",
@@ -369,7 +369,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "ELISA Kit - Human IL-6",
-            "price": 189.00,
+            "price": 15687.00,  # ₹15,687 (was $189)
             "description": "Quantitative sandwich ELISA kit for human Interleukin-6 detection. High sensitivity and specificity. Includes all necessary reagents.",
             "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop",
             "category": "Reagents",
@@ -383,7 +383,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Microcentrifuge Tubes, 1.5mL (1000 pack)",
-            "price": 29.00,
+            "price": 2407.00,  # ₹2,407 (was $29)
             "description": "Sterile, DNase/RNase-free microcentrifuge tubes. Graduated markings and secure-fit caps. Ideal for sample storage and centrifugation.",
             "image_url": "https://images.unsplash.com/photo-1551601651-09e1c1c96b7a?w=300&h=300&fit=crop",
             "category": "Consumables",
@@ -395,7 +395,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "PCR Tubes, 0.2mL (500 pack)",
-            "price": 35.00,
+            "price": 2905.00,  # ₹2,905 (was $35)
             "description": "Ultra-thin wall PCR tubes for optimal heat transfer. Compatible with most thermal cyclers. Clear polypropylene construction.",
             "image_url": "https://images.unsplash.com/photo-1551601651-09e1c1c96b7a?w=300&h=300&fit=crop",
             "category": "Consumables",
@@ -407,7 +407,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Nitrile Gloves, Powder-Free (100 pack)",
-            "price": 15.00,
+            "price": 1245.00,  # ₹1,245 (was $15)
             "description": "Chemical-resistant nitrile gloves. Powder-free and latex-free. Textured fingertips for improved grip. Size Large.",
             "image_url": "https://images.unsplash.com/photo-1551601651-09e1c1c96b7a?w=300&h=300&fit=crop",
             "category": "Consumables",
@@ -421,7 +421,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Digital pH Meter with Calibration",
-            "price": 179.00,
+            "price": 14857.00,  # ₹14,857 (was $179)
             "description": "High-precision digital pH meter with automatic temperature compensation. Includes electrode, calibration buffers, and carrying case.",
             "image_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=300&h=300&fit=crop",
             "category": "Instruments",
@@ -433,7 +433,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "Analytical Balance, 0.1mg Precision",
-            "price": 1450.00,
+            "price": 120350.00,  # ₹1,20,350 (was $1450)
             "description": "High-precision analytical balance with 0.1mg readability. Internal calibration, draft shield, and RS232 connectivity.",
             "image_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=300&h=300&fit=crop",
             "category": "Instruments",
@@ -445,7 +445,7 @@ async def initialize_products():
         {
             "id": str(uuid.uuid4()),
             "name": "UV-Vis Spectrophotometer",
-            "price": 3299.00,
+            "price": 273817.00,  # ₹2,73,817 (was $3299)
             "description": "Compact UV-Visible spectrophotometer for nucleic acid and protein quantification. Wavelength range 190-1100nm with high accuracy.",
             "image_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=300&h=300&fit=crop",
             "category": "Instruments",
