@@ -2,29 +2,26 @@
   {
     "test": "API Root Endpoint",
     "success": true,
-    "message": "API accessible: Cart Management System API",
+    "message": "API accessible: Enhanced Cart Management System API",
     "response_data": null,
-    "timestamp": "2025-07-22T09:40:23.359127"
+    "timestamp": "2025-07-22T10:06:38.052626"
   },
   {
     "test": "User Registration",
     "success": true,
-    "message": "User registered successfully with JWT token",
-    "response_data": {
-      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYXJhaC5qb2huc29uQGV4YW1wbGUuY29tIiwiZXhwIjoxNzUzMTc5MDIzfQ.1pp8uSFjHueuAOHjrcsrnnjNeKyHSchv36us4ODknSk",
-      "token_type": "bearer"
-    },
-    "timestamp": "2025-07-22T09:40:23.647919"
+    "message": "User already exists (expected for repeat tests)",
+    "response_data": null,
+    "timestamp": "2025-07-22T10:06:38.071025"
   },
   {
     "test": "User Login",
     "success": true,
     "message": "Login successful with JWT token",
     "response_data": {
-      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYXJhaC5qb2huc29uQGV4YW1wbGUuY29tIiwiZXhwIjoxNzUzMTc5MDIzfQ.1pp8uSFjHueuAOHjrcsrnnjNeKyHSchv36us4ODknSk",
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYXJhaC5qb2huc29uQGV4YW1wbGUuY29tIiwiZXhwIjoxNzUzMTgwNTk4fQ.OZFZHsGUCXVbsXNJlrUJESBf9V1WsrSXUgxBoDBnwGc",
       "token_type": "bearer"
     },
-    "timestamp": "2025-07-22T09:40:23.892818"
+    "timestamp": "2025-07-22T10:06:38.377920"
   },
   {
     "test": "Protected Endpoint",
@@ -33,43 +30,139 @@
     "response_data": {
       "id": "5c22e42d-7e55-4840-a156-721726352068",
       "email": "sarah.johnson@example.com",
-      "name": "Sarah Johnson"
+      "name": "Sarah Johnson",
+      "phone": null,
+      "address": null,
+      "created_at": "2025-07-22T09:40:23.630000"
     },
-    "timestamp": "2025-07-22T09:40:23.943732"
+    "timestamp": "2025-07-22T10:06:38.390223"
+  },
+  {
+    "test": "Profile Update",
+    "success": true,
+    "message": "Profile updated successfully",
+    "response_data": {
+      "message": "Profile updated successfully"
+    },
+    "timestamp": "2025-07-22T10:06:38.441932"
+  },
+  {
+    "test": "Profile Update Verification",
+    "success": true,
+    "message": "Profile changes verified",
+    "response_data": null,
+    "timestamp": "2025-07-22T10:06:38.451850"
   },
   {
     "test": "Unauthenticated Cart Access",
     "success": true,
     "message": "Cart properly protected - requires authentication",
     "response_data": null,
-    "timestamp": "2025-07-22T09:40:23.992667"
+    "timestamp": "2025-07-22T10:06:38.501844"
   },
   {
     "test": "Initialize Products",
     "success": true,
-    "message": "Products initialized: Sample products initialized successfully",
+    "message": "Products initialized: Enhanced sample products initialized successfully",
     "response_data": {
-      "message": "Sample products initialized successfully"
+      "message": "Enhanced sample products initialized successfully",
+      "count": 9
     },
-    "timestamp": "2025-07-22T09:40:24.009567"
+    "timestamp": "2025-07-22T10:06:38.513137"
   },
   {
     "test": "Get Products",
     "success": true,
-    "message": "Retrieved 4 products",
+    "message": "Retrieved 9 products",
     "response_data": {
-      "count": 4,
+      "count": 9,
       "first_product": {
-        "id": "d53e5478-74fd-4f6d-a235-6817e2d99e83",
-        "name": "Wireless Headphones",
-        "price": 99.99,
-        "description": "High-quality wireless headphones with noise cancellation",
-        "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-        "stock": 50,
-        "created_at": "2025-07-22T09:40:24.004000"
+        "id": "4a7720da-3713-4084-b035-62bb387fb426",
+        "name": "Bamboo Cutting Board",
+        "price": 24.99,
+        "description": "Eco-friendly bamboo cutting board with juice groove and non-slip feet",
+        "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+        "category": "Home",
+        "stock": 60,
+        "rating": 4.4,
+        "reviews_count": 92,
+        "created_at": "2025-07-22T10:06:38.507000"
       }
     },
-    "timestamp": "2025-07-22T09:40:24.062244"
+    "timestamp": "2025-07-22T10:06:38.524710"
+  },
+  {
+    "test": "Product Text Search",
+    "success": true,
+    "message": "Found 2 products matching 'wireless'",
+    "response_data": {
+      "count": 2
+    },
+    "timestamp": "2025-07-22T10:06:38.574804"
+  },
+  {
+    "test": "Product Category Filter",
+    "success": true,
+    "message": "Found 3 Electronics products",
+    "response_data": {
+      "count": 3
+    },
+    "timestamp": "2025-07-22T10:06:38.586624"
+  },
+  {
+    "test": "Category Filter Accuracy",
+    "success": true,
+    "message": "All returned products are Electronics",
+    "response_data": null,
+    "timestamp": "2025-07-22T10:06:38.586644"
+  },
+  {
+    "test": "Product Price Filter",
+    "success": true,
+    "message": "Found 3 products in $50-$200 range",
+    "response_data": {
+      "count": 3
+    },
+    "timestamp": "2025-07-22T10:06:38.595857"
+  },
+  {
+    "test": "Price Filter Accuracy",
+    "success": true,
+    "message": "All products within specified price range",
+    "response_data": null,
+    "timestamp": "2025-07-22T10:06:38.595877"
+  },
+  {
+    "test": "Product Sorting",
+    "success": true,
+    "message": "Products correctly sorted by price (desc). Range: $699.99 - $19.99",
+    "response_data": null,
+    "timestamp": "2025-07-22T10:06:38.605979"
+  },
+  {
+    "test": "Get Categories",
+    "success": true,
+    "message": "Retrieved 4 categories: Electronics, Fashion, Home, Sports",
+    "response_data": {
+      "categories": [
+        "Electronics",
+        "Fashion",
+        "Home",
+        "Sports"
+      ]
+    },
+    "timestamp": "2025-07-22T10:06:38.654889"
+  },
+  {
+    "test": "Search Suggestions",
+    "success": true,
+    "message": "Retrieved 1 suggestions for 'smart'",
+    "response_data": {
+      "suggestions": [
+        "Smartphone Pro Max"
+      ]
+    },
+    "timestamp": "2025-07-22T10:06:38.663306"
   },
   {
     "test": "Get Cart",
@@ -80,138 +173,193 @@
       "user_id": "5c22e42d-7e55-4840-a156-721726352068",
       "items": [],
       "total": 0.0,
-      "updated_at": "2025-07-22T09:40:24.070949"
+      "updated_at": "2025-07-22T09:40:24.192000"
     },
-    "timestamp": "2025-07-22T09:40:24.087499"
+    "timestamp": "2025-07-22T10:06:38.674751"
   },
   {
     "test": "Add to Cart",
     "success": true,
-    "message": "Added 2 items to cart. Total: $199.98",
+    "message": "Added 2 items to cart. Total: $49.98",
     "response_data": {
       "id": "28837cbc-8595-4b68-ab6e-812b614d02e1",
       "user_id": "5c22e42d-7e55-4840-a156-721726352068",
       "items": [
         {
-          "product_id": "d53e5478-74fd-4f6d-a235-6817e2d99e83",
-          "name": "Wireless Headphones",
-          "price": 99.99,
-          "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-          "quantity": 2
+          "product_id": "4a7720da-3713-4084-b035-62bb387fb426",
+          "name": "Bamboo Cutting Board",
+          "price": 24.99,
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+          "quantity": 2,
+          "category": "Home"
         }
       ],
-      "total": 199.98,
-      "updated_at": "2025-07-22T09:40:24.097053"
+      "total": 49.98,
+      "updated_at": "2025-07-22T10:06:38.684288"
     },
-    "timestamp": "2025-07-22T09:40:24.100615"
+    "timestamp": "2025-07-22T10:06:38.729013"
   },
   {
     "test": "Add to Cart",
     "success": true,
-    "message": "Added 1 items to cart. Total: $899.97",
+    "message": "Added 1 items to cart. Total: $84.97",
     "response_data": {
       "id": "28837cbc-8595-4b68-ab6e-812b614d02e1",
       "user_id": "5c22e42d-7e55-4840-a156-721726352068",
       "items": [
         {
-          "product_id": "d53e5478-74fd-4f6d-a235-6817e2d99e83",
-          "name": "Wireless Headphones",
-          "price": 99.99,
-          "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-          "quantity": 2
+          "product_id": "4a7720da-3713-4084-b035-62bb387fb426",
+          "name": "Bamboo Cutting Board",
+          "price": 24.99,
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+          "quantity": 2,
+          "category": "Home"
         },
         {
-          "product_id": "28c9a279-c7bb-4ed6-9ae9-fe5031bd328e",
-          "name": "Smartphone",
-          "price": 699.99,
-          "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
-          "quantity": 1
+          "product_id": "fe39cefa-78eb-4bdb-ad6e-893dddaee1d9",
+          "name": "Ceramic Coffee Mug Set",
+          "price": 34.99,
+          "image_url": "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=300&h=300&fit=crop",
+          "quantity": 1,
+          "category": "Home"
         }
       ],
-      "total": 899.97,
-      "updated_at": "2025-07-22T09:40:24.108895"
+      "total": 84.97,
+      "updated_at": "2025-07-22T10:06:38.736876"
     },
-    "timestamp": "2025-07-22T09:40:24.112272"
+    "timestamp": "2025-07-22T10:06:38.740859"
   },
   {
     "test": "Update Cart",
     "success": true,
-    "message": "Updated quantity to 3. Total: $999.96",
+    "message": "Updated quantity to 3. Total: $109.96",
     "response_data": {
       "id": "28837cbc-8595-4b68-ab6e-812b614d02e1",
       "user_id": "5c22e42d-7e55-4840-a156-721726352068",
       "items": [
         {
-          "product_id": "d53e5478-74fd-4f6d-a235-6817e2d99e83",
-          "name": "Wireless Headphones",
-          "price": 99.99,
-          "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-          "quantity": 3
+          "product_id": "4a7720da-3713-4084-b035-62bb387fb426",
+          "name": "Bamboo Cutting Board",
+          "price": 24.99,
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+          "quantity": 3,
+          "category": "Home"
         },
         {
-          "product_id": "28c9a279-c7bb-4ed6-9ae9-fe5031bd328e",
-          "name": "Smartphone",
-          "price": 699.99,
-          "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
-          "quantity": 1
+          "product_id": "fe39cefa-78eb-4bdb-ad6e-893dddaee1d9",
+          "name": "Ceramic Coffee Mug Set",
+          "price": 34.99,
+          "image_url": "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=300&h=300&fit=crop",
+          "quantity": 1,
+          "category": "Home"
         }
       ],
-      "total": 999.96,
-      "updated_at": "2025-07-22T09:40:24.118690"
+      "total": 109.96000000000001,
+      "updated_at": "2025-07-22T10:06:38.747916"
     },
-    "timestamp": "2025-07-22T09:40:24.162549"
+    "timestamp": "2025-07-22T10:06:38.792089"
   },
   {
     "test": "Remove from Cart",
     "success": true,
-    "message": "Item removed. Total: $299.97",
+    "message": "Item removed. Total: $74.97",
     "response_data": {
       "id": "28837cbc-8595-4b68-ab6e-812b614d02e1",
       "user_id": "5c22e42d-7e55-4840-a156-721726352068",
       "items": [
         {
-          "product_id": "d53e5478-74fd-4f6d-a235-6817e2d99e83",
-          "name": "Wireless Headphones",
-          "price": 99.99,
-          "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-          "quantity": 3
+          "product_id": "4a7720da-3713-4084-b035-62bb387fb426",
+          "name": "Bamboo Cutting Board",
+          "price": 24.99,
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+          "quantity": 3,
+          "category": "Home"
         }
       ],
-      "total": 299.96999999999997,
-      "updated_at": "2025-07-22T09:40:24.170929"
+      "total": 74.97,
+      "updated_at": "2025-07-22T10:06:38.798854"
     },
-    "timestamp": "2025-07-22T09:40:24.174848"
+    "timestamp": "2025-07-22T10:06:38.842776"
   },
   {
     "test": "Add to Cart",
     "success": true,
-    "message": "Added 1 items to cart. Total: $399.96",
+    "message": "Added 1 items to cart. Total: $99.96",
     "response_data": {
       "id": "28837cbc-8595-4b68-ab6e-812b614d02e1",
       "user_id": "5c22e42d-7e55-4840-a156-721726352068",
       "items": [
         {
-          "product_id": "d53e5478-74fd-4f6d-a235-6817e2d99e83",
-          "name": "Wireless Headphones",
-          "price": 99.99,
-          "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-          "quantity": 4
+          "product_id": "4a7720da-3713-4084-b035-62bb387fb426",
+          "name": "Bamboo Cutting Board",
+          "price": 24.99,
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+          "quantity": 4,
+          "category": "Home"
         }
       ],
-      "total": 399.96,
-      "updated_at": "2025-07-22T09:40:24.183085"
+      "total": 99.96,
+      "updated_at": "2025-07-22T10:06:38.850774"
     },
-    "timestamp": "2025-07-22T09:40:24.186459"
+    "timestamp": "2025-07-22T10:06:38.854695"
   },
   {
     "test": "Checkout",
     "success": true,
-    "message": "Order placed successfully. Order ID: 9eaef3ec-7ac9-47f4-9a1a-73547caad7c5, Total: $399.96",
+    "message": "Order placed successfully. Order ID: c8b3dc41-a523-434c-ba76-e9596ecc6589, Total: $99.96",
     "response_data": {
-      "order_id": "9eaef3ec-7ac9-47f4-9a1a-73547caad7c5",
-      "total": 399.96,
-      "message": "Order placed successfully! (Mock checkout)"
+      "order_id": "c8b3dc41-a523-434c-ba76-e9596ecc6589",
+      "total": 99.96,
+      "message": "Order placed successfully!",
+      "order_date": "2025-07-22T10:06:38.861886"
     },
-    "timestamp": "2025-07-22T09:40:24.236681"
+    "timestamp": "2025-07-22T10:06:38.920755"
+  },
+  {
+    "test": "Order History",
+    "success": true,
+    "message": "Retrieved 1 orders from history",
+    "response_data": {
+      "order_count": 1
+    },
+    "timestamp": "2025-07-22T10:06:38.931182"
+  },
+  {
+    "test": "Order Details",
+    "success": true,
+    "message": "Retrieved order details for c8b3dc41-a523-434c-ba76-e9596ecc6589. Total: $99.96",
+    "response_data": {
+      "id": "c8b3dc41-a523-434c-ba76-e9596ecc6589",
+      "user_id": "5c22e42d-7e55-4840-a156-721726352068",
+      "user_name": "Sarah Johnson Updated",
+      "user_email": "sarah.johnson@example.com",
+      "items": [
+        {
+          "product_id": "4a7720da-3713-4084-b035-62bb387fb426",
+          "name": "Bamboo Cutting Board",
+          "price": 24.99,
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+          "quantity": 4,
+          "category": "Home"
+        }
+      ],
+      "total": 99.96,
+      "status": "completed",
+      "order_date": "2025-07-22T10:06:38.861000",
+      "shipping_address": "789 Shipping Lane, Delivery City, ST 67890"
+    },
+    "timestamp": "2025-07-22T10:06:38.984289"
+  },
+  {
+    "test": "User Analytics",
+    "success": true,
+    "message": "Analytics retrieved: 1 orders, $99.96 spent, favorite: Home",
+    "response_data": {
+      "total_orders": 1,
+      "total_spent": 99.96,
+      "favorite_category": "Home",
+      "average_order_value": 99.96
+    },
+    "timestamp": "2025-07-22T10:06:38.997230"
   }
 ]
