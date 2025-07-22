@@ -20,7 +20,9 @@ class CartSystemTester:
         self.user_data = {
             "email": "sarah.johnson@example.com",
             "password": "SecurePass123!",
-            "name": "Sarah Johnson"
+            "name": "Sarah Johnson",
+            "phone": "+1-555-0123",
+            "address": "123 Main Street, Anytown, ST 12345"
         }
         self.test_results = []
         
